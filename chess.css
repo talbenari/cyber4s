@@ -1,0 +1,43 @@
+body {
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    text-decoration: underline;
+    font-size: 120%;
+    background-color: rgba(185, 168, 168, 0.507);
+}
+
+table {
+    /* border-collapse: collapse; */
+    border: 50px solid rgb(112, 85, 50);
+    padding: 10px;
+    margin: auto;
+    margin-top: 60px;
+    background-color: black;
+}
+
+td {
+    width: 90px;
+    height: 90px;
+}
+
+.light-cell {
+    background-color: white;
+}
+
+.dark-cell {
+    background-color: rgb(94, 89, 89);
+}
+
+.selected {
+    background-color: rgba(225, 236, 69, 0.952);
+    border: 1px solid rgb(18, 43, 20);
+}
+
+.possible-move {
+    background-color: rgba(210, 250, 145, 0.836);
+}
+
+img {
+    width: 75px;
+    height: 75px;
+}
