@@ -15,6 +15,20 @@ let moveOptions;
 let boardData;
 let pieces = [];
 
+class BoardData {
+    constructor(pieces) {
+        this.pieces = pieces;
+    }
+    getPiece(row, col) {
+        for (const piece of this.pieces) {
+            if (piece.row === this.row && piece.col === this.col) {
+                return piece;
+            }
+            // if else => undefined (auto)
+        }
+    }
+}
+
 class Piece {
     constructor(row, col, type, player) {
         this.row = row;
@@ -90,16 +104,14 @@ class Piece {
     getKnightRelativeMoves() {
         // too complexed
         let result = [];
-        for (let i = 1; i < 2; i++) {
-            result.push([i, (i * 2)]);
-            result.push([i, -(i * 2)]);
-            result.push([-i, -(i * 2)]);
-            result.push([-i, (i * 2)]);
-            result.push([(i * 2), -i]);
-            result.push([(i * 2), i]);
-            result.push([-(i * 2), i]);
-            result.push([-(i * 2), -i]);
-        }
+            result.push([1, (2)]);
+            result.push([1, -(2)]);
+            result.push([-1, -(2)]);
+            result.push([-1, (2)]);
+            result.push([(2), -1]);
+            result.push([( 2), 1]);
+            result.push([-(2), 1]);
+            result.push([-(2), -1]);
         return result;
     }
     getKingtRelativeMoves() {
@@ -118,21 +130,6 @@ class Piece {
         let result = [];
         result = result.concat(this.getBishopRelativeMoves(), this.getRookRelativeMoves());
         return result;
-    }
-
-}
-
-class BoardData {
-    constructor(pieces) {
-        this.pieces = pieces;
-    }
-    getPiece(row, col) {
-        for (const piece of this.pieces) {
-            if (piece.row === this.row && piece.col === this.col) {
-                return piece;
-            }
-            // if else => undefined (auto)
-        }
     }
 }
 
@@ -185,11 +182,13 @@ function onCellClick(event, row, col) {
         }
     }
 
-    if (selectedCell !== undefined) {
-        selectedCell.classList.remove('selected');
+    if (this.pieces == undefined) {
+        if (selectedCell !== undefined) {
+            selectedCell.classList.remove('selected');
+        }
+        selectedCell = event.currentTarget;
+        selectedCell.classList.add('selected');
     }
-    selectedCell = event.currentTarget;
-    selectedCell.classList.add('selected');
 }
 
 function chessBoardCreation() {
