@@ -1,0 +1,113 @@
+
+.page {
+    font-family: sans-serif;
+    margin-top: 3%;
+    width: 100%;
+}
+
+.topbar {
+    flex-direction: row;
+    border-bottom: 0.5px solid rgba(110, 125, 139, 0.76);
+    background-color: rgba(210, 229, 245, 0.164);
+    height: 5%;
+    width: 85vw;
+}
+
+.sidebar {
+    display: inline-block;
+    background-color: rgba(210, 229, 245, 0.322);
+    left: 0%;
+    top: 7%;
+    width: 9%;
+    height: 3700px;
+    border-right: 0.5px solid rgba(110, 125, 139, 0.76);
+    margin-top: 1%;
+    font-size: 12px;
+    text-align: left;
+}
+li {
+    padding: 3.5px;
+    list-style: none;
+}
+a:hover {
+    text-decoration: underline!important;
+}
+.info {
+    margin-left: 0;
+    padding-left: 1%;
+    width: 85%;
+    margin-right: 4%;
+    float: right;
+}
+
+.maininfo {
+    display: inline-flex;
+    width: 90%;
+}
+#description {
+    border-bottom: 0.5px solid rgba(110, 125, 139, 0.76);
+}
+p {
+    font-size: 14px;
+    font-family: sans-serif;
+}
+
+a {
+    color: #0645ad;
+    text-decoration: none;
+}
+.info-table {
+    background-color: rgb(248, 248, 248);
+    text-align: left;
+    width: 250px;
+    margin-left: 20%;
+    border: 1px solid lightgrey;
+    font-size: 100%;
+    font-family: sans-serif;
+}
+
+.table-item {
+    display: inline;
+    text-align: center;
+    margin: 5px;
+}
+
+.contents {
+    border: 1px solid rgb(71, 77, 82);
+    margin-right: 75%;
+    padding-right: 15px;
+    background-color: rgba(184, 139, 161, 0.137);
+    font-size: 13.3px;
+    font-family: Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    color: rgb(15, 91, 179);
+    width: 300px;
+}
+
+.descripted-img {
+
+    display: inline;
+    background-color: rgb(233, 220, 220);
+    border: 0.5px solid rgb(105, 101, 101);
+    margin: 15px;
+    padding: 15px;
+    height: fit-content;
+    width: 180px;
+    font-size: smaller;
+    font-family: Arial;
+
+}
+
+#img-group {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 1%;
+    border-top: 0.5px solid rgba(110, 125, 139, 0.76);
+    justify-content: space-around;
+    
+}
+h3 {
+    margin-top: 50px!important;
+    margin-bottom: 0px;
+    border-bottom: 0.5px solid rgba(110, 125, 139, 0.76);
+}
