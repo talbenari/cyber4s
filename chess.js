@@ -1,4 +1,3 @@
-// => document.body
 const MYBODY = document.body;
 const BOARD_SIZE = 8;
 const DARK_PLAYER = 'dark';
@@ -9,8 +8,8 @@ const KNIGHT = 'knight';
 const BISHOP = 'bishop';
 const KING = 'king';
 const QUEEN = 'queen';
-// mytable => table
-let myTable = document.createElement('table');
+
+let table = document.createElement('table');
 let selectedCell;
 let moveOptions;
 let boardData;
@@ -173,7 +172,7 @@ function onCellClick(event, row, col) {
     console.log(col);
     for (let i = 0; i < BOARD_SIZE; i++) {
         for (let j = 0; j < BOARD_SIZE; j++) {
-            myTable.rows[i].cells[j].classList.remove('possible-move');
+            table.rows[i].cells[j].classList.remove('possible-move');
         }
     }
 
@@ -182,7 +181,7 @@ function onCellClick(event, row, col) {
             console.log(piece);
             let possibleMoves = piece.getPossibleMoves();
             for (let possibleMove of possibleMoves)
-                myTable.rows[possibleMove[0]].cells[possibleMove[1]].classList.add('possible-move');
+                table.rows[possibleMove[0]].cells[possibleMove[1]].classList.add('possible-move');
         }
     }
 
@@ -194,9 +193,9 @@ function onCellClick(event, row, col) {
 }
 
 function chessBoardCreation() {
-    MYBODY.appendChild(myTable);
+    MYBODY.appendChild(table);
     for (let row = 0; row < BOARD_SIZE; row++) {
-        const rowElement = myTable.insertRow();
+        const rowElement = table.insertRow();
         for (let col = 0; col < BOARD_SIZE; col++) {
             const cell = rowElement.insertCell();
             if ((row + col) % 2 === 0) {
@@ -210,7 +209,7 @@ function chessBoardCreation() {
     boardData = new BoardData(getInitialBoard());
 
     for (let piece of boardData.pieces) {
-        addImage(myTable.rows[piece.row].cells[piece.col], piece.player, piece.type);
+        addImage(table.rows[piece.row].cells[piece.col], piece.player, piece.type);
 
     }
 
