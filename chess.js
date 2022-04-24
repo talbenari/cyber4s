@@ -55,14 +55,27 @@ class Piece {
     }
 
 
-
     getPawnMoves(boardData) {
-        if (this.player === WHITE_PLAYER) {
-            return [[1, 0]];
-        } else if (this.player === DARK_PLAYER) {
-            return [[-1, 0]];
+        let result = [];
+        let dirction = 1;
+        if (this.player === DARK_PLAYER) {
+            dirction = -1;
         }
+        let nextMoveCell = [this.row + dirction, this.col];
+        if (boardData.isEmpty(nextMoveCell)) {
+            result.push(nextMoveCell);
+        }
+        nextMoveCell = [this.row + dirction, this.col + dirction];
+        if (boardData.isOpponent(nextMoveCell[0], nextMoveCell[1], this.player)) {
+            result.push(nextMoveCell);
+        }
+        nextMoveCell = [this.row + dirction, this.col - dirction];
+        if (boardData.isOpponent(nextMoveCell[0], nextMoveCell[1], this.player)) {
+            result.push(nextMoveCell);
+        }
+        return result;
     }
+
     getRookMoves(boardData) {
         let result = [];
         result = result.concat(this.getMovesByDirection(1, 0, boardData));
@@ -75,35 +88,35 @@ class Piece {
     getBishopMoves(boardData) {
         let result = [];
         for (let i = 1; i < BOARD_SIZE; i++) {
-            result.push([i, i]);
-            result.push([-i, -i]);
-            result.push([-i, i]);
-            result.push([i, -i]);
+            result = result.concat(this.getMovesByDirection(1, 1, boardData));
+            result = result.concat(this.getMovesByDirection(-1, -1, boardData));
+            result = result.concat(this.getMovesByDirection(-1, 1, boardData));
+            result = result.concat(this.getMovesByDirection(1, -1, boardData));
         }
         return result;
     }
     getKnightMoves(boardData) {
         let result = [];
-        result.push([1, (2)]);
-        result.push([1, -(2)]);
-        result.push([-1, -(2)]);
-        result.push([-1, (2)]);
-        result.push([(2), -1]);
-        result.push([(2), 1]);
-        result.push([-(2), 1]);
-        result.push([-(2), -1]);
+        const Moves = [[1, 2], [1, -2], [-1, 2], [-1, -2], [2, 1], [2, -1], [-2, 1], [-2, -1]];
+        for (let knightMove of Moves) {
+            let row = this.row + knightMove[0];
+            let col = this.col + knightMove[1];
+            if (!boardData.isSamePlayer(row, col, this.player)) {
+                result.push([row, col]);
+            }
+        }
         return result;
     }
     getKingtMoves(boardData) {
         let result = [];
-        result.push([0, 1]);
-        result.push([0, -1]);
-        result.push([1, 0]);
-        result.push([-1, 0]);
-        result.push([1, 1]);
-        result.push([-1, -1]);
-        result.push([1, -1]);
-        result.push([-1, 1]);
+        const Moves = [[1, 1], [1, -1], [-1, 1], [-1, -1], [1, 0], [0, -1], [-1, 0], [0, 1]];
+        for (let kingMove of Moves) {
+            let row = this.row +kingMove[0];
+            let col = this.col + kingMove[1];
+            if (!boardData.isSamePlayer(row, col, this.player)) {
+                result.push([row, col]);
+            }
+        }
         return result;
     }
     getQueentMoves(boardData) {
@@ -120,12 +133,10 @@ class Piece {
                 result.push([row, col]);
             }
             else if (boardData.isSamePlayer(row, col, this.player)) {
-                result.push([row, col]);
-                console.log("player");
                 return result;
             }
             else if (boardData.isOpponent(row, col, this.player)) {
-                console.log("opponent");
+                result.push([row, col]);
                 return result;
             }
         }
@@ -195,11 +206,12 @@ function onCellClick(event, row, col) {
         }
     }
 
-    for (let piece of boardData.pieces) {
-        if (boardData.getPiece(row, col) !== undefined) {
-            let possibleMoves = piece.getPossibleMoves(boardData);
-            for (let possibleMove of possibleMoves)
-                table.rows[possibleMove[0]].cells[possibleMove[1]].classList.add('possible-move');
+    const piece = boardData.getPiece(row, col);
+    if (piece !== undefined) {
+        let possibleMoves = piece.getPossibleMoves(boardData);
+        for (let possibleMove of possibleMoves) {
+            const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
+            cell.classList.add('possible-move');
         }
     }
     if (selectedCell !== undefined) {
@@ -228,7 +240,8 @@ function chessBoardCreation() {
     boardData = new BoardData(getInitialBoard());
 
     for (let piece of boardData.pieces) {
-        addImage(table.rows[piece.row].cells[piece.col], piece.player, piece.type);
+        const cell = table.rows[piece.row].cells[piece.col];
+        addImage(cell, piece.player, piece.type);
 
     }
 
