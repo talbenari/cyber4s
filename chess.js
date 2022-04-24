@@ -57,19 +57,19 @@ class Piece {
 
     getPawnMoves(boardData) {
         let result = [];
-        let dirction = 1;
+        let direction = 1;
         if (this.player === DARK_PLAYER) {
-            dirction = -1;
+            direction = -1;
         }
-        let nextMoveCell = [this.row + dirction, this.col];
-        if (boardData.isEmpty(nextMoveCell)) {
+        let nextMoveCell = [this.row + direction, this.col];
+        if (boardData.isEmpty(nextMoveCell[0], nextMoveCell[1])) {
             result.push(nextMoveCell);
         }
-        nextMoveCell = [this.row + dirction, this.col + dirction];
+        nextMoveCell = [this.row + direction, this.col + direction];
         if (boardData.isOpponent(nextMoveCell[0], nextMoveCell[1], this.player)) {
             result.push(nextMoveCell);
         }
-        nextMoveCell = [this.row + dirction, this.col - dirction];
+        nextMoveCell = [this.row + direction, this.col - direction];
         if (boardData.isOpponent(nextMoveCell[0], nextMoveCell[1], this.player)) {
             result.push(nextMoveCell);
         }
@@ -170,8 +170,8 @@ class BoardData {
 
 function getInitialBoard() {
     let result = [];
-    addPiece(result, 0, WHITE_PLAYER)
-    addPiece(result, 7, DARK_PLAYER)
+    addPiece(result, 0, WHITE_PLAYER);
+    addPiece(result, 7, DARK_PLAYER);
 
     for (i = 0; i < BOARD_SIZE; i++) {
         result.push(new Piece(1, i, "pawn", WHITE_PLAYER));
