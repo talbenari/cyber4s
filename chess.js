@@ -11,7 +11,6 @@ const QUEEN = 'queen';
 
 let table = document.createElement('table');
 let selectedCell;
-let moveOptions;
 let boardData;
 let pieces = [];
 
@@ -23,9 +22,21 @@ class BoardData {
         for (const piece of this.pieces) {
             if (piece.row === this.row && piece.col === this.col) {
                 return piece;
+            } else {
+                return undefined;
             }
-            // if else => undefined (auto)
         }
+    }
+    isEmpty(row, col) {
+        return this.getPiece(row, col) === undefined;
+    }
+    isSamePlayer(row, col, player) {
+        const piece = this.getPiece(row, col);
+        return piece !== undefined && piece.player === player;
+    }
+    isOpponent(row, col, player) {
+        const piece = this.getPiece(row, col);
+        return piece !== undefined && piece.player !== player;
     }
 }
 
@@ -102,16 +113,15 @@ class Piece {
         return result;
     }
     getKnightRelativeMoves() {
-        // too complexed
         let result = [];
-            result.push([1, (2)]);
-            result.push([1, -(2)]);
-            result.push([-1, -(2)]);
-            result.push([-1, (2)]);
-            result.push([(2), -1]);
-            result.push([( 2), 1]);
-            result.push([-(2), 1]);
-            result.push([-(2), -1]);
+        result.push([1, (2)]);
+        result.push([1, -(2)]);
+        result.push([-1, -(2)]);
+        result.push([-1, (2)]);
+        result.push([(2), -1]);
+        result.push([(2), 1]);
+        result.push([-(2), 1]);
+        result.push([-(2), -1]);
         return result;
     }
     getKingtRelativeMoves() {
@@ -156,8 +166,6 @@ function addPiece(result, row, player) {
     result.push(new Piece(row, 7, "rook", player));
 }
 
-
-
 function addImage(cell, player, name) {
     const image = document.createElement('img');
     image.src = player + '/' + name + '.png';
@@ -181,15 +189,14 @@ function onCellClick(event, row, col) {
                 table.rows[possibleMove[0]].cells[possibleMove[1]].classList.add('possible-move');
         }
     }
-
-    if (this.pieces == undefined) {
-        if (selectedCell !== undefined) {
-            selectedCell.classList.remove('selected');
-        }
-        selectedCell = event.currentTarget;
-        selectedCell.classList.add('selected');
+    // let emptyCell = boardData.isEmpty(row, col);
+    if (selectedCell !== undefined) {
+        selectedCell.classList.remove('selected');
     }
-}
+    selectedCell = event.currentTarget;
+    selectedCell.classList.add('selected');
+    console.log('yay!');
+}    
 
 function chessBoardCreation() {
     MYBODY.appendChild(table);
