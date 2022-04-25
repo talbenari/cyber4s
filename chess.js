@@ -14,8 +14,6 @@ let selectedCell;
 let boardData;
 let pieces = [];
 
-
-
 class Piece {
     constructor(row, col, type, player) {
         this.row = row;
@@ -35,9 +33,9 @@ class Piece {
         } else if (this.type === BISHOP) {
             Moves = this.getBishopMoves(boardData);
         } else if (this.type === KING) {
-            Moves = this.getKingtMoves(boardData);
+            Moves = this.getKingMoves(boardData);
         } else if (this.type === QUEEN) {
-            Moves = this.getQueentMoves(boardData);
+            Moves = this.getQueenMoves(boardData);
         } else {
             console.log("Unknown type", type)
         }
@@ -107,11 +105,11 @@ class Piece {
         }
         return result;
     }
-    getKingtMoves(boardData) {
+    getKingMoves(boardData) {
         let result = [];
         const Moves = [[1, 1], [1, -1], [-1, 1], [-1, -1], [1, 0], [0, -1], [-1, 0], [0, 1]];
         for (let kingMove of Moves) {
-            let row = this.row +kingMove[0];
+            let row = this.row + kingMove[0];
             let col = this.col + kingMove[1];
             if (!boardData.isSamePlayer(row, col, this.player)) {
                 result.push([row, col]);
@@ -119,7 +117,7 @@ class Piece {
         }
         return result;
     }
-    getQueentMoves(boardData) {
+    getQueenMoves(boardData) {
         let result = [];
         result = result.concat(this.getBishopMoves(boardData), this.getRookMoves(boardData));
         return result;
@@ -166,6 +164,14 @@ class BoardData {
         const piece = this.getPiece(row, col);
         return piece !== undefined && piece.player !== player;
     }
+    removePiece(row, col) {
+        for (let i = 0; i < this.pieces.length; i++) {
+            const piece = this.pieces[i];
+            if (piece.row === row && piece.col === col) {
+                this.pieces.splice(i, 1);
+            }
+        }
+    }
 }
 
 function getInitialBoard() {
@@ -197,30 +203,46 @@ function addImage(cell, player, name) {
     cell.appendChild(image);
 }
 
-function onCellClick(event, row, col) {
-    console.log(row);
-    console.log(col);
+function movePiece(piece, row, col) {
+    const possibleMoves = piece.getPossibleMoves(boardData);
+    for (let possibleMove of possibleMoves) {
+        if (possibleMove[0] === row && possibleMove[1] === col) {
+            boardData.removePiece(row, col);
+            piece.row = row;
+            piece.col = col;
+            return true;
+        }
+    } return false;
+}
+
+function displayPossibleMove(row, col) {
     for (let i = 0; i < BOARD_SIZE; i++) {
         for (let j = 0; j < BOARD_SIZE; j++) {
             table.rows[i].cells[j].classList.remove('possible-move');
+            table.rows[i].cells[j].classList.remove('selected');
         }
     }
-
     const piece = boardData.getPiece(row, col);
     if (piece !== undefined) {
         let possibleMoves = piece.getPossibleMoves(boardData);
         for (let possibleMove of possibleMoves) {
-            const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
-            cell.classList.add('possible-move');
+            table.rows[possibleMove[0]].cells[possibleMove[1]].classList.add('possible-move');
         }
     }
-    if (selectedCell !== undefined) {
-        selectedCell.classList.remove('selected');
-        // console.log('hi');
+    event.currentTarget.classList.add('selected');
+    selectedCell = piece;
+}
+
+function onCellClick(event, row, col) {
+    const piece = boardData.getPiece(row, col);
+    if (piece !== undefined) {
+        displayPossibleMove(row, col);
     }
-    selectedCell = event.currentTarget;
-    selectedCell.classList.add('selected');
-    // console.log('yay!');
+    if (movePiece(selectedCell, row, col)) {
+        selectedCell = undefined;
+        chessBoardCreation(boardData);
+    }
+
 }
 
 function chessBoardCreation() {
