@@ -8,6 +8,7 @@ const KNIGHT = 'knight';
 const BISHOP = 'bishop';
 const KING = 'king';
 const QUEEN = 'queen';
+const CHESS_BOARD_ID = 'chess-board';
 
 let table = document.createElement('table');
 let selectedCell;
@@ -41,14 +42,13 @@ class Piece {
         }
 
         let filteredMoves = [];
-        for (let absoluteMove of Moves) {
+        for (const absoluteMove of Moves) {
             const absoluteRow = absoluteMove[0];
             const absoluteCol = absoluteMove[1];
             if (absoluteRow >= 0 && absoluteRow <= 7 && absoluteCol >= 0 && absoluteCol <= 7) {
                 filteredMoves.push(absoluteMove);
             }
         }
-        console.log('filteredMoves', filteredMoves);
         return filteredMoves;
     }
 
@@ -203,18 +203,6 @@ function addImage(cell, player, name) {
     cell.appendChild(image);
 }
 
-function movePiece(piece, row, col) {
-    const possibleMoves = piece.getPossibleMoves(boardData);
-    for (let possibleMove of possibleMoves) {
-        if (possibleMove[0] === row && possibleMove[1] === col) {
-            boardData.removePiece(row, col);
-            piece.row = row;
-            piece.col = col;
-            return true;
-        }
-    } return false;
-}
-
 function displayPossibleMove(row, col) {
     for (let i = 0; i < BOARD_SIZE; i++) {
         for (let j = 0; j < BOARD_SIZE; j++) {
@@ -226,27 +214,53 @@ function displayPossibleMove(row, col) {
     if (piece !== undefined) {
         let possibleMoves = piece.getPossibleMoves(boardData);
         for (let possibleMove of possibleMoves) {
-            table.rows[possibleMove[0]].cells[possibleMove[1]].classList.add('possible-move');
+           const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
+           cell.classList.add('possible-move');
         }
     }
-    event.currentTarget.classList.add('selected');
+    table.rows[row].cells[col].classList.add('selected');
     selectedCell = piece;
 }
-
 function onCellClick(event, row, col) {
-    const piece = boardData.getPiece(row, col);
-    if (piece !== undefined) {
+    if (selectedCell === undefined) {
         displayPossibleMove(row, col);
+    } else {
+        if (tryToMovePiece(selectedCell, row, col)) {
+            selectedCell = undefined;
+            chessBoardCreation(boardData);
+        } else {
+            displayPossibleMove(row, col);
+        }
     }
-    if (movePiece(selectedCell, row, col)) {
-        selectedCell = undefined;
-        chessBoardCreation(boardData);
+}
+function tryToMovePiece(piece, row, col) {
+    const possibleMoves = piece.getPossibleMoves(boardData);
+    for (const possibleMove of possibleMoves) {
+        if (possibleMove[0] === row && possibleMove[1] === col) {
+            boardData.removePiece(row, col);
+            piece.row = row;
+            piece.col = col;
+            return true;
+        }
     }
-
+    return false;
 }
 
-function chessBoardCreation() {
-    MYBODY.appendChild(table);
+function initGame() {
+    boardData = new BoardData(getInitialBoard());
+    chessBoardCreation(boardData);
+  }
+
+
+
+function chessBoardCreation(boardData) {
+    table = document.getElementById(CHESS_BOARD_ID);
+    if (table !== null) {
+        table.remove();
+    }
+    table = document.createElement('table');
+    table.id = CHESS_BOARD_ID;
+    document.body.appendChild(table);
     for (let row = 0; row < BOARD_SIZE; row++) {
         const rowElement = table.insertRow();
         for (let col = 0; col < BOARD_SIZE; col++) {
@@ -259,8 +273,6 @@ function chessBoardCreation() {
             cell.addEventListener('click', (event) => onCellClick(event, row, col));
         }
     }
-    boardData = new BoardData(getInitialBoard());
-
     for (let piece of boardData.pieces) {
         const cell = table.rows[piece.row].cells[piece.col];
         addImage(cell, piece.player, piece.type);
@@ -268,5 +280,5 @@ function chessBoardCreation() {
     }
 
 }
-window.addEventListener('load', chessBoardCreation)
+window.addEventListener('load', initGame)
 
