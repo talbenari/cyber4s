@@ -6,6 +6,13 @@ class Piece {
         this.player = player;
     }
 
+    getOpponent() {
+        if (this.player === WHITE_PLAYER) {
+            return DARK_PLAYER;
+        }
+        return WHITE_PLAYER;
+    }
+
     getPossibleMoves(boardData) {
         let Moves;
         if (this.type === PAWN) {
@@ -23,7 +30,6 @@ class Piece {
         } else {
             console.log("Unknown type", type)
         }
-
         let filteredMoves = [];
         for (const absoluteMove of Moves) {
             const absoluteRow = absoluteMove[0];
@@ -35,12 +41,18 @@ class Piece {
         return filteredMoves;
     }
 
-
     getPawnMoves(boardData) {
         let result = [];
         let direction = 1;
         if (this.player === DARK_PLAYER) {
             direction = -1;
+        }
+        // adds pawn's first double move and removes it if the cell is not empty.
+        if (this.row === 1 || this.row === 6) {
+            let nextMoveCell = [this.row + direction * 2, this.col];
+            if (boardData.isEmpty(nextMoveCell[0], nextMoveCell[1])) {
+                result.push([this.row + direction * 2, this.col]);
+            }
         }
         let nextMoveCell = [this.row + direction, this.col];
         if (boardData.isEmpty(nextMoveCell[0], nextMoveCell[1])) {
@@ -107,7 +119,7 @@ class Piece {
     }
     getMovesByDirection(directionRow, directionCol, boardData) {
         let result = [];
-        for (i = 1; i < BOARD_SIZE; i++) {
+        for (let i = 1; i < BOARD_SIZE; i++) {
             let row = this.row + directionRow * i;
             let col = this.col + directionCol * i;
             if (boardData.isEmpty(row, col)) {
