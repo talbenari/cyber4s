@@ -4,14 +4,24 @@ body {
     text-decoration: underline;
     font-size: 120%;
     background-color: rgba(185, 168, 168, 0.507);
+    display: flex;
+}
+
+h1 {
+    text-align: center; 
+    font-size: 300%;
+    text-decoration: underline solid black;
+    margin-left: 40%;
+    margin-bottom: 10px;
+    margin-top: 10px;
+
 }
 
 table {
-    /* border-collapse: collapse; */
-    border: 50px solid rgb(112, 85, 50);
+    border: 30px solid rgb(112, 85, 50);
     padding: 10px;
     margin: auto;
-    margin-top: 60px;
+    margin-top: 100px;
     background-color: black;
     position: relative;
 }
