@@ -1,46 +1,26 @@
-const MYBODY = document.body;
 const BOARD_SIZE = 8;
 const DARK_PLAYER = 'dark';
 const WHITE_PLAYER = 'white';
+
 const PAWN = 'pawn';
 const ROOK = 'rook';
 const KNIGHT = 'knight';
 const BISHOP = 'bishop';
 const KING = 'king';
 const QUEEN = 'queen';
+
 const CHESS_BOARD_ID = 'chess-board';
 
-let table = document.createElement('table');
+const PIECES = [ROOK, KNIGHT, BISHOP, KING, QUEEN, BISHOP, KNIGHT, ROOK];
+
 let selectedCell;
-let boardData;
-let pieces = [];
-
-function getInitialBoard() {
-    let result = [];
-    addPiece(result, 0, WHITE_PLAYER);
-    addPiece(result, 7, DARK_PLAYER);
-
-    for (i = 0; i < BOARD_SIZE; i++) {
-        result.push(new Piece(1, i, "pawn", WHITE_PLAYER));
-        result.push(new Piece(6, i, "pawn", DARK_PLAYER));
-    }
-    return result;
-}
-
-function addPiece(result, row, player) {
-    result.push(new Piece(row, 0, "rook", player));
-    result.push(new Piece(row, 1, "knight", player));
-    result.push(new Piece(row, 2, "bishop", player));
-    result.push(new Piece(row, 3, "queen", player));
-    result.push(new Piece(row, 4, "king", player));
-    result.push(new Piece(row, 5, "bishop", player));
-    result.push(new Piece(row, 6, "knight", player));
-    result.push(new Piece(row, 7, "rook", player));
-}
+let game;
+let table;
 
 function addImage(cell, player, name) {
     const image = document.createElement('img');
     image.src = player + '/' + name + '.png';
+    image.draggable = false;
     cell.appendChild(image);
 }
 
@@ -51,47 +31,29 @@ function displayPossibleMove(row, col) {
             table.rows[i].cells[j].classList.remove('selected');
         }
     }
-    const piece = boardData.getPiece(row, col);
+    const piece = game.boardData.getPiece(row, col);
     if (piece !== undefined) {
-        let possibleMoves = piece.getPossibleMoves(boardData);
+        let possibleMoves = game.getPossibleMoves(piece);
         for (let possibleMove of possibleMoves) {
-           const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
-           cell.classList.add('possible-move');
+            const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
+            cell.classList.add('possible-move');
         }
     }
     table.rows[row].cells[col].classList.add('selected');
     selectedCell = piece;
 }
-function onCellClick(event, row, col) {
-    if (selectedCell === undefined) {
-        displayPossibleMove(row, col);
-    } else {
-        if (tryToMovePiece(selectedCell, row, col)) {
+
+// first "if" canceled all moves after winner declared
+function onCellClick(row, col) {
+    if (game.winner === undefined) {
+        if (selectedCell !== undefined && game.tryToMovePiece(selectedCell, row, col)) {
             selectedCell = undefined;
-            chessBoardCreation(boardData);
+            chessBoardCreation(game.boardData);
         } else {
             displayPossibleMove(row, col);
         }
     }
 }
-function tryToMovePiece(piece, row, col) {
-    const possibleMoves = piece.getPossibleMoves(boardData);
-    for (const possibleMove of possibleMoves) {
-        if (possibleMove[0] === row && possibleMove[1] === col) {
-            boardData.removePiece(row, col);
-            piece.row = row;
-            piece.col = col;
-            return true;
-        }
-    }
-    return false;
-}
-
-function initGame() {
-    boardData = new BoardData(getInitialBoard());
-    chessBoardCreation(boardData);
-  }
-
 
 
 function chessBoardCreation(boardData) {
@@ -99,6 +61,7 @@ function chessBoardCreation(boardData) {
     if (table !== null) {
         table.remove();
     }
+
     table = document.createElement('table');
     table.id = CHESS_BOARD_ID;
     document.body.appendChild(table);
@@ -111,7 +74,7 @@ function chessBoardCreation(boardData) {
             } else {
                 cell.className = 'dark-cell';
             }
-            cell.addEventListener('click', (event) => onCellClick(event, row, col));
+            cell.addEventListener('click', () => onCellClick(row, col));
         }
     }
     for (let piece of boardData.pieces) {
@@ -119,7 +82,19 @@ function chessBoardCreation(boardData) {
         addImage(cell, piece.player, piece.type);
 
     }
-
+    if (game.winner !== undefined) {
+        const winnerPopup = document.createElement('div');
+        const winner = game.winner.charAt(0).toUpperCase() + game.winner.slice(1);
+        winnerPopup.textContent = winner + ' player wins!';
+        winnerPopup.classList.add('winner-dialog');
+        table.appendChild(winnerPopup);
+    }
 }
+function initGame() {
+    game = new Game(WHITE_PLAYER);
+    chessBoardCreation(game.boardData);
+}
+
+
 window.addEventListener('load', initGame)
 
